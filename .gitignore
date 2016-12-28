@@ -1,0 +1,10 @@
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Maven
+log/
+target/
+/.apt_generated/
+Contact GitHub API Training Shop Blog About
