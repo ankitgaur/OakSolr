@@ -28,27 +28,38 @@ import com.oak.utils.JWTUtil;
 public class LoginController {
 
 	@CrossOrigin
-	@RequestMapping(value = "/whoami", produces = "application/json", method = RequestMethod.POST)
+	@RequestMapping(value = "/whoami", produces = "application/json", method = RequestMethod.GET)
 	public LoginVO whoami(HttpServletRequest request, HttpServletResponse response) throws SolrServerException, IOException {
 
 		String header = request.getHeader("Authorization");
 
+		LoginVO lvo = null;
+		
 		if (header == null || !header.startsWith("Bearer ")) {
-			System.out.println("Where i expected");
+			System.out.println("No Token Found");
 			throw new JwtTokenMissingException("No JWT token found in request headers");
 		}
 
 		String token = header.substring(7);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-
-		User user = UserService.searchById(id).getResults().get(0);
-
-		LoginVO lvo = new LoginVO();
-		lvo.setName(user.getName());
-		lvo.setUsername(user.getUsername());
-		lvo.setGroups(user.getGroups());
-		lvo.setToken(token);
+		
+		if(token!=null && !token.isEmpty()){
+			
+			String id = JWTUtil.parseToken(token).getId();
+			if(id!=null && !id.isEmpty()){
+				User user = UserService.searchById(id).getResults().get(0);
+				
+				
+				lvo = new LoginVO();
+				if(user.getJwt().equals(token)){
+					lvo.setName(user.getName());
+					lvo.setUsername(user.getUsername());
+					lvo.setGroups(user.getGroups());
+					lvo.setToken(token);
+					
+				}
+			}
+			
+		}
 
 		return lvo;
 

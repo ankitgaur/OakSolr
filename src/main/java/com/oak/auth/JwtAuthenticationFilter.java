@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,7 +21,7 @@ import com.oak.exceptions.JwtTokenMissingException;
 
 @Component("jwtAuthenticationFilter")
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
-	
+
 	public JwtAuthenticationFilter() {
 		super("/*");
 	}
@@ -35,17 +36,34 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 			throws AuthenticationException {
 
 		String header = request.getHeader("Authorization");
+		String authToken = null;
+		Cookie[] cookies = request.getCookies();
+
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+
+				if (cookie.getName().trim().equals("jwt")) {
+					authToken = cookie.getValue();
+				}
+
+			}
+		}
 
 		JwtAuthenticationToken authRequest = null;
 		
-		if (header == null || !header.startsWith("Bearer ")) {
-			System.out.println("Where i expected");
-			throw new JwtTokenMissingException("No JWT token found in request headers");
+		if(authToken==null || authToken.isEmpty()){
+			if (header == null || !header.startsWith("Bearer ")) {
+				System.out.println("Neither header nor cookie ");
+				throw new JwtTokenMissingException("No JWT token found in request headers");
+			}
+			else{
+				authToken = header.substring(7);
+			}
 		}
-
-		String authToken = header.substring(7);
-		authRequest = new JwtAuthenticationToken(authToken);
 		
+		
+		authRequest = new JwtAuthenticationToken(authToken);
+
 		return getAuthenticationManager().authenticate(authRequest);
 	}
 
@@ -60,14 +78,12 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 		chain.doFilter(request, response);
 	}
 
-
 	@Override
 	@Autowired
 	@Qualifier("jwtAuthenticationManager")
 	public void setAuthenticationManager(AuthenticationManager authenticationManager) {
 		super.setAuthenticationManager(authenticationManager);
 	}
-
 
 	@Override
 	@Autowired

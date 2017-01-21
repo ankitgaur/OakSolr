@@ -116,12 +116,15 @@ public class UserService {
 		SolrInputDocument sdoc = new SolrInputDocument();
 		
 		UserResponseVO uvo = searchByToken(jwt);
-		User user = uvo.getResults().get(0);
-		
-		update(user.getId(),"jwt",null);
+		if(uvo!=null && uvo.getResults()!=null && uvo.getResults().size()>0){
+			User user = uvo.getResults().get(0);
+			
+			update(user.getId(),"jwt",null);
 
-		solr.add(sdoc); // send it to the solr server
-		solr.commit();
+			solr.add(sdoc); // send it to the solr server
+			solr.commit();
+		}
+		
 		solr.close();
 
 	}

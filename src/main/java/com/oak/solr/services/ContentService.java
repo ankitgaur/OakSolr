@@ -30,6 +30,8 @@ public class ContentService {
 	public static final String DELETED = "DELETED";
 
 	public static String add(SolrInputDocument document) throws SolrServerException, IOException {
+		
+		document.addField("status", NEW);
 
 		String id = UUID.randomUUID().toString();
 
@@ -46,6 +48,7 @@ public class ContentService {
 			}
 		} catch (Exception e) {
 			// TODO : Logging
+			System.out.println(e + " : " + e.getMessage());
 			return null;
 		}
 
@@ -85,7 +88,7 @@ public class ContentService {
 
 	}
 
-	public static void update(String id, String field, String value) throws SolrServerException, IOException {
+	public static void update(String id, String field, Object value) throws SolrServerException, IOException {
 
 		SolrClient solr = new HttpSolrClient.Builder(urlString).build();
 		// create the document
@@ -162,7 +165,7 @@ public class ContentService {
 				builder.append("content_type:" + content_type);
 			}
 
-			if (tags != null && tags.isEmpty()) {
+			if (tags != null && !tags.isEmpty()) {
 				for (String tag : tags) {
 					if (builder.length() == 0) {
 						builder.append("tags:" + tag);
@@ -172,6 +175,8 @@ public class ContentService {
 
 				}
 			}
+			
+			//System.out.println(builder.toString());
 
 			query.set("q", builder.toString());
 
@@ -341,7 +346,7 @@ public class ContentService {
 		ct.setCreatedon(new Date().getTime());
 		ct.setTags(taglist);
 
-		add(ct.createSolrInputDoc());
+		id = add(ct.createSolrInputDoc());
 
 		return id;
 

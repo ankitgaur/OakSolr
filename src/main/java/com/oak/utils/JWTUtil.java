@@ -30,7 +30,7 @@ public class JWTUtil {
 
             User u = new User();
             u.setUsername(body.getSubject());
-            u.setEmail((String) body.get("userId"));
+            u.setId((String) body.get("userId"));
            
 
             return u;

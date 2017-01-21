@@ -18,7 +18,12 @@ public class ContentServiceTest {
 	@Test
 	public void runTestCases() throws SolrServerException, IOException {
 
-		testAdd();
+		
+		testDelete("ce14cd43-67d9-4c19-a45c-705ce8ad2f35");
+		
+		//testUpdate("2f97ea92-9d43-4e54-a4da-95bf9243fddc");
+		
+		/*testAdd();
 
 		testSearchByTypeAndTag();
 
@@ -37,7 +42,7 @@ public class ContentServiceTest {
 			testDelete(id);
 
 			testSearchById(id);
-		}
+		}*/
 	}
 
 	public void testDelete(String id) throws SolrServerException, IOException {
@@ -121,7 +126,7 @@ public class ContentServiceTest {
 		System.out.println("Starting " + Thread.currentThread().getStackTrace()[1]);
 		long start = new Date().getTime();
 
-		ContentService.update(id, "description", "changed description");
+		ContentService.update(id, "image_id", "f28a0ecd-77e1-4b7a-9a2f-36ae9852c8d6");
 
 		long end = new Date().getTime();
 

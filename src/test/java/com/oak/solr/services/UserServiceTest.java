@@ -18,11 +18,11 @@ public class UserServiceTest {
 	@Test
 	public void runTestCases() throws SolrServerException, IOException {
 
-		testUpdate("0f1aa559-5fe8-4cc5-936d-34585d66f719");
+		//testUpdate("0f1aa559-5fe8-4cc5-936d-34585d66f719");
 		
-		//testAdd();
+		testAdd();
 
-		//testSearchById(id);
+		testSearchById(id);
 
 		// testListAll();
 
@@ -146,11 +146,11 @@ public class UserServiceTest {
 
 		// for(int i = 0; i<5;i++){
 		User user = new User();
-		user.setName("Ankit Gaur");
-		user.setUsername("ankitgaur");
-		user.setEmail("gaur.ankit2007@gmail.com");
+		user.setName("Richard Agidee");
+		user.setUsername("richardagidee");
+		user.setEmail("richard.agidee@ip2n.com");
 		user.setPassword("dGVzdDEyMw==");
-		user.setStatus(UserService.NEW);
+		user.setStatus(UserService.ACTIVATED);
 		// user.setTags(list);
 		user.setGroups(groups);
 		user.setCreatedon(new Date().getTime());

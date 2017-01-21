@@ -25,7 +25,7 @@ public class JwtAuthenticationToken implements Authentication {
 	public JwtAuthenticationToken(String token){
 		this.token = token;
 		this.credentials = token;
-		this.name = JWTUtil.parseToken(token).getEmail();
+		this.name = JWTUtil.parseToken(token).getId();
 	}
 	
 	public JwtAuthenticationToken(String name,String token,List<GrantedAuthority> authorities){
