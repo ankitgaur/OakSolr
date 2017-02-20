@@ -111,6 +111,14 @@ public class ContentController {
 
 		return ContentService.searchByTypeAndTag(type, new ArrayList<String>(Arrays.asList(tags.split(" "))), start);
 	}
+	
+	@CrossOrigin
+	@RequestMapping(value = "/content/parent/{type}/{parentid}", produces = "application/json", method = RequestMethod.GET)
+	public ContentResponseVO getReplies(@PathVariable String parentid,@PathVariable String type) throws SolrServerException, IOException {
+
+		return ContentService.searchByParentAndType(parentid,type);
+	}
+	
 
 	@CrossOrigin
 	@RequestMapping(value = "/content/popular/{type}", produces = "application/json", method = RequestMethod.GET)

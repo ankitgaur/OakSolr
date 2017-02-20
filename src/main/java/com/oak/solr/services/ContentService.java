@@ -393,4 +393,41 @@ public class ContentService {
 
 	}
 
+	public static ContentResponseVO searchByParentAndType(String parentid, String content_type) throws SolrServerException, IOException {
+		ContentResponseVO crvo = null;
+		List<Content> cl = null;
+
+		SolrClient solr = new HttpSolrClient.Builder(urlString).build();
+		SolrQuery query = new SolrQuery();
+		try {
+			query.set("q", "content_type:" + content_type+ " AND parent_id:\""+parentid+"\"");
+
+			query.set("fq", "!status:" + DELETED);
+			query.set("sort", "createdon desc");
+			query.set("start", "" + 0);
+
+			QueryResponse response = solr.query(query);
+
+			if (response.getStatus() == 0 && response.getResults().size() > 0) {
+
+				cl = new ArrayList<Content>();
+				crvo = new ContentResponseVO();
+				crvo.setStatus_code(response.getStatus());
+				crvo.setTotal(response.getResults().getNumFound());
+
+				crvo.setResults(cl);
+
+				for (SolrDocument doc : response.getResults()) {
+					if (doc != null) {
+						cl.add(new Content(doc));
+					}
+				}
+
+			}
+		} finally {
+			solr.close();
+		}
+		return crvo;
+	}
+
 }
