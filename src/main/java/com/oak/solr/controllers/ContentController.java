@@ -139,9 +139,11 @@ public class ContentController {
 
 	@CrossOrigin
 	@RequestMapping(value = "/content", method = RequestMethod.POST)
-	public ResponseEntity<Void> createArticle(@RequestParam("tags") String tags, @RequestParam("title") String title,
-			@RequestParam("content_type") String content_type, @RequestParam("content") String content,
-			@RequestParam("intro") String intro,
+	public ResponseEntity<Void> createArticle(@RequestParam(name = "tags", required = false) String tags, @RequestParam("title") String title,
+			@RequestParam("content_type") String content_type, @RequestParam(name = "content", required = false) String content,
+			@RequestParam(name = "parent_id", required = false) String parent_id,
+			@RequestParam(name = "parent_name", required = false) String parent_name,
+			@RequestParam(name="intro", required = false) String intro,
 			@RequestParam(name = "displayImage", required = false) MultipartFile displayImage)
 			throws ParseException, IOException, SolrServerException {
 
@@ -172,6 +174,9 @@ public class ContentController {
 		ct.setCreatedon(new Date().getTime());
 		ct.setTags(taglist);
 		ct.setImage_id(image_id);
+		
+		ct.setParent_id(parent_id);
+		ct.setParent_name(parent_name);
 
 		ContentService.add(ct.createSolrInputDoc());
 		return new ResponseEntity<Void>(HttpStatus.CREATED);
@@ -203,6 +208,7 @@ public class ContentController {
 	@RequestMapping(value = "/content/{id}", method = RequestMethod.POST)
 	public ResponseEntity<Void> updateArticle(@PathVariable("id") String id, @RequestParam(name = "tags", required = false) String tags, @RequestParam(name = "title", required = false) String title,
 			 @RequestParam(name = "content", required = false) String content,
+			 @RequestParam(name = "parent_id", required = false) String parent_id,
 			@RequestParam(name = "intro", required = false) String intro,
 			@RequestParam(name = "displayImage", required = false) MultipartFile displayImage) throws ParseException, SolrServerException, IOException {
 
@@ -225,6 +231,10 @@ public class ContentController {
 		
 		else if(title!=null){
 			ContentService.update(id, "name", title);
+		}
+		
+		else if(parent_id!=null){
+			ContentService.update(id, "parent_id", parent_id);
 		}
 		
 		else if(content!=null){

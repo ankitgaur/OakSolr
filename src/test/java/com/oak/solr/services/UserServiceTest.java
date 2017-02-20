@@ -9,7 +9,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Test;
 
 import com.oak.solr.entities.User;
-import com.oak.solr.services.UserService;
 
 public class UserServiceTest {
 
@@ -20,9 +19,9 @@ public class UserServiceTest {
 
 		//testUpdate("0f1aa559-5fe8-4cc5-936d-34585d66f719");
 		
-		testAdd();
+		//testAdd();
 
-		testSearchById(id);
+		//testSearchById(id);
 
 		// testListAll();
 
@@ -146,9 +145,9 @@ public class UserServiceTest {
 
 		// for(int i = 0; i<5;i++){
 		User user = new User();
-		user.setName("Richard Agidee");
-		user.setUsername("richardagidee");
-		user.setEmail("richard.agidee@ip2n.com");
+		user.setName("Ifedayo Oluwadamilola");
+		user.setUsername("ifedayo");
+		user.setEmail("sureife@gmail.com");
 		user.setPassword("dGVzdDEyMw==");
 		user.setStatus(UserService.ACTIVATED);
 		// user.setTags(list);
