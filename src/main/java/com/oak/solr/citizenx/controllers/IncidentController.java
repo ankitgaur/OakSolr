@@ -85,7 +85,98 @@ public class IncidentController {
 	}
 
 	@CrossOrigin
+	@RequestMapping(value = "/incidents/image/{id}", method = RequestMethod.POST)
+	public String uploadImage(@RequestParam("content") String content,
+			@RequestParam("fname") String fname,
+			@PathVariable String id) throws IOException, SolrServerException {
+
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
+		String uid = authentication.getName();
+		
+		User user = UserService.searchById(uid).getResults().get(0);
+		
+		List<String> taglist = new ArrayList<String>();
+		taglist.add(user.getUsername());
+		taglist.add(user.getId());
+		taglist.add(user.getEmail());
+
+		String image_id = null;
+
+		if (content != null && !content.isEmpty()) {
+			
+			Content ct = new Content();
+			ct.setContent_type("image");
+			ct.setName(fname);
+			ct.setDescription(content);
+
+			ct.setCreatedby(user.getId());
+			ct.setAuthor(user.getUsername());
+			ct.setCreatedon(new Date().getTime());
+			ct.setTags(taglist);
+
+			image_id = ContentService.add(ct.createSolrInputDoc());
+			
+		}
+		
+		ContentService.update(id, "image_id", image_id);
+
+		return id;
+	}
+	
+	@CrossOrigin
 	@RequestMapping(value = "/incidents", method = RequestMethod.POST)
+	public IncidentVO createAppIncident(
+			@RequestParam("type") String type,
+			@RequestParam("state") String state,
+			@RequestParam("govt") String govt,
+			@RequestParam("category") String category,
+			@RequestParam("description") String description,
+			@RequestParam("questions") String questions)
+			throws JsonGenerationException, JsonMappingException, IOException,
+			ParseException, SolrServerException {
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+
+		User user = UserService.searchById(id).getResults().get(0);
+
+		List<String> taglist = null;
+		//
+		// if (tags != null && !tags.isEmpty()) {
+		// taglist = new ArrayList<String>(Arrays.asList(tags.split(" ")));
+		// }
+
+		String image_id = null;
+
+		/*if (displayImage != null && displayImage.getBytes() != null && displayImage.getBytes().length > 0) {
+			image_id = ContentService.uploadImage(user, taglist, displayImage);
+		}*/
+
+		
+		questions = addStateGovt(questions,state,govt);
+		
+		Content ct = new Content();
+		ct.setContent_type("incidents");
+		ct.setName(description);
+		ct.setDescription(questions);
+		//ct.setIntro(intro);
+		ct.setCreatedby(user.getId());
+		ct.setAuthor(user.getUsername());
+		ct.setCreatedon(new Date().getTime());
+		ct.setTags(taglist);
+		ct.setImage_id(image_id);
+		
+		//ct.setParent_id(parent_id);
+		ct.setParent_name(type);
+
+		ct.setId(ContentService.add(ct.createSolrInputDoc()));
+		IncidentVO incidentVO = new IncidentVO(ct);
+		return incidentVO;
+	}
+	
+	@CrossOrigin
+	@RequestMapping(value = "/incident", method = RequestMethod.POST)
 	public ResponseEntity<Void> createIncident(
 			@RequestParam("type") String type,
 			@RequestParam("state") String state,
